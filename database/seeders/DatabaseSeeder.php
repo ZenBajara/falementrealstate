@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            PropertyTypeSeeder::class,
             UserSeeder::class,
+            PropertyTypeSeeder::class,
             PropertySeeder::class,
         ]);
     }

@@ -20,7 +20,8 @@ class Property extends Model
         'num_bathrooms',
         'num_bedrooms',
         'price',
-        'is_featured'
+        'is_featured',
+        'images'
     ];
 
     protected $casts = [
@@ -36,4 +37,5 @@ class Property extends Model
     {
         return $this->belongsTo(PropertyType::class, 'property_type_id');
     }
+
 }

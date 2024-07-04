@@ -7,8 +7,11 @@ use App\Models\Property;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
 
 class PropertyResource extends Resource
 {
@@ -57,13 +60,18 @@ class PropertyResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
+                Toggle::make('is_featured')
+                ->label('Is Featured'),
                 Forms\Components\FileUpload::make('images')
-                    ->label('Property Images')
-                    ->multiple()
-                    ->image()
-                    ->directory('property-images')
-                    ->preserveFilenames()
-                    ->required(),
+                ->label('Property Images')
+                ->multiple()
+                ->image()
+                ->directory('property-images')
+                ->preserveFilenames()
+                ->getUploadedFileNameForStorageUsing(
+                    fn (TemporaryUploadedFile $file): string => Str::random(10) . '-' . $file->getClientOriginalName()
+                )
+                ->required(),
             ]);
     }
 
@@ -103,10 +111,10 @@ class PropertyResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('image_urls')
+                Tables\Columns\TextColumn::make('images')
                     ->label('Images')
                     ->getStateUsing(function ($record) {
-                        return $record->image_urls;
+                        return $record->images;
                     })
                     ->formatStateUsing(function ($state) {
                         return collect($state)->map(function ($path) {
@@ -144,25 +152,5 @@ class PropertyResource extends Resource
             'view' => Pages\ViewProperty::route('/{record}'),
             'edit' => Pages\EditProperty::route('/{record}/edit'),
         ];
-    }
-
-    protected static function afterSave(Property $property, array $data)
-    {
-        // Retrieve uploaded files
-        $images = $data['images'] ?? [];
-
-        // Initialize an array to hold the image paths
-        $imageUrls = [];
-
-        // Save each image
-        foreach ($images as $image) {
-            $path = $image->store('property-images', 'public');
-            $imageUrls[] = $path;
-        }
-
-        // Update the property with the image URLs
-        $property->update([
-            'image_urls' => $imageUrls,
-        ]);
     }
 }

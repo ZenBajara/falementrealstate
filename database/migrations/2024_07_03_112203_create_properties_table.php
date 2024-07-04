@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('num_bathrooms');
             $table->integer('num_bedrooms');
             $table->decimal('price', 10, 2);
+            $table->tinyInteger('is_featured')->default(0);
             $table->json('images')->nullable();
             $table->timestamps();
 

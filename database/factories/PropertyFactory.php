@@ -26,6 +26,9 @@ class PropertyFactory extends Factory
             'num_bathrooms' => $this->faker->numberBetween(1, 5),
             'num_bedrooms' => $this->faker->numberBetween(1, 5),
             'price' => $this->faker->randomFloat(2, 100000, 1000000),
+            'images' => [
+                'property-images/Fr68eavzqW-real-estate-sign-2.webp'
+            ],
         ];
     }
 }
